@@ -15,6 +15,7 @@ interface DeviceSelectorProps {
   onValueChange: (value: string) => void;
   type: 'input' | 'output';
   devices: { id: string; name: string }[];
+  disabled?: boolean;
 }
 
 export const DeviceSelector: React.FC<DeviceSelectorProps> = ({
@@ -22,7 +23,8 @@ export const DeviceSelector: React.FC<DeviceSelectorProps> = ({
   value,
   onValueChange,
   type,
-  devices
+  devices,
+  disabled = false
 }) => {
   const Icon = type === 'input' ? Mic : Speaker;
 
@@ -32,7 +34,7 @@ export const DeviceSelector: React.FC<DeviceSelectorProps> = ({
         <Icon className="h-4 w-4 text-primary" />
         <span>{label}</span>
       </Label>
-      <Select value={value} onValueChange={onValueChange}>
+      <Select value={value} onValueChange={onValueChange} disabled={disabled}>
         <SelectTrigger className="bg-card border-border hover:border-primary/50 transition-colors">
           <SelectValue placeholder={`Select ${type} device`} />
         </SelectTrigger>

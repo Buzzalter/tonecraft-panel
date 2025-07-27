@@ -8,37 +8,37 @@ All colors MUST be HSL.
 
 @layer base {
   :root {
-    /* Pastel green theme */
-    --background: 150 15% 97%;
-    --foreground: 150 20% 15%;
+    /* Pastel yellow theme */
+    --background: 48 100% 96%;
+    --foreground: 45 30% 20%;
 
-    --card: 150 20% 98%;
-    --card-foreground: 150 20% 15%;
+    --card: 50 100% 97%;
+    --card-foreground: 45 30% 20%;
 
-    --popover: 150 20% 98%;
-    --popover-foreground: 150 20% 15%;
+    --popover: 50 100% 97%;
+    --popover-foreground: 45 30% 20%;
 
-    --primary: 150 45% 65%;
-    --primary-foreground: 150 20% 15%;
+    --primary: 48 85% 70%;
+    --primary-foreground: 45 30% 20%;
 
-    --secondary: 150 20% 90%;
-    --secondary-foreground: 150 20% 25%;
+    --secondary: 50 60% 88%;
+    --secondary-foreground: 45 30% 30%;
 
-    --muted: 150 15% 92%;
-    --muted-foreground: 150 10% 45%;
+    --muted: 52 40% 92%;
+    --muted-foreground: 45 15% 50%;
 
-    --accent: 15 55% 75%;
-    --accent-foreground: 150 20% 15%;
+    --accent: 35 80% 75%;
+    --accent-foreground: 45 30% 20%;
 
     --destructive: 0 70% 65%;
     --destructive-foreground: 0 5% 98%;
 
-    --border: 150 20% 88%;
-    --input: 150 15% 95%;
-    --ring: 150 45% 65%;
+    --border: 50 50% 85%;
+    --input: 52 60% 93%;
+    --ring: 48 85% 70%;
 
     /* Custom design tokens */
-    --primary-glow: 150 50% 80%;
+    --primary-glow: 48 90% 85%;
     --gradient-primary: linear-gradient(135deg, hsl(var(--primary)), hsl(var(--primary-glow)));
     --gradient-soft: linear-gradient(180deg, hsl(var(--background)), hsl(var(--muted)));
     --shadow-soft: 0 4px 20px -4px hsl(var(--primary) / 0.15);

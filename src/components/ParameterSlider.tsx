@@ -11,6 +11,7 @@ interface ParameterSliderProps {
   step: number;
   unit?: string;
   description?: string;
+  disabled?: boolean;
 }
 
 export const ParameterSlider: React.FC<ParameterSliderProps> = ({
@@ -21,7 +22,8 @@ export const ParameterSlider: React.FC<ParameterSliderProps> = ({
   max,
   step,
   unit = '',
-  description
+  description,
+  disabled = false
 }) => {
   const handleValueChange = (newValue: number[]) => {
     onValueChange(newValue[0]);
@@ -45,6 +47,7 @@ export const ParameterSlider: React.FC<ParameterSliderProps> = ({
         max={max}
         step={step}
         className="w-full"
+        disabled={disabled}
       />
       
       <div className="flex justify-between text-xs text-muted-foreground">

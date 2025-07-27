@@ -7,10 +7,11 @@ import { cn } from '@/lib/utils';
 
 interface AudioUploadProps {
   onFileSelect: (file: File | null) => void;
-  selectedFile: File | null;
+  selectedFile?: File | null;
+  disabled?: boolean;
 }
 
-export const AudioUpload: React.FC<AudioUploadProps> = ({ onFileSelect, selectedFile }) => {
+export const AudioUpload: React.FC<AudioUploadProps> = ({ onFileSelect, selectedFile, disabled = false }) => {
   const [isDragActive, setIsDragActive] = useState(false);
 
   const onDrop = useCallback((acceptedFiles: File[]) => {
@@ -30,7 +31,8 @@ export const AudioUpload: React.FC<AudioUploadProps> = ({ onFileSelect, selected
     },
     multiple: false,
     onDragEnter: () => setIsDragActive(true),
-    onDragLeave: () => setIsDragActive(false)
+    onDragLeave: () => setIsDragActive(false),
+    disabled
   });
 
   const handleRemoveFile = () => {
@@ -57,6 +59,7 @@ export const AudioUpload: React.FC<AudioUploadProps> = ({ onFileSelect, selected
             size="sm" 
             onClick={handleRemoveFile}
             className="text-destructive hover:text-destructive hover:bg-destructive/10"
+            disabled={disabled}
           >
             <X className="h-4 w-4" />
           </Button>
@@ -69,10 +72,12 @@ export const AudioUpload: React.FC<AudioUploadProps> = ({ onFileSelect, selected
     <Card 
       {...getRootProps()} 
       className={cn(
-        "p-8 border-2 border-dashed cursor-pointer transition-all duration-300",
-        isDragActive 
-          ? "border-primary bg-primary/10 shadow-lg" 
-          : "border-primary/30 bg-primary/5 hover:border-primary/50 hover:bg-primary/8"
+        "p-8 border-2 border-dashed transition-all duration-300",
+        disabled 
+          ? "border-muted bg-muted/50 cursor-not-allowed opacity-60" 
+          : isDragActive 
+            ? "border-primary bg-primary/10 shadow-lg cursor-pointer" 
+            : "border-primary/30 bg-primary/5 hover:border-primary/50 hover:bg-primary/8 cursor-pointer"
       )}
     >
       <input {...getInputProps()} />
