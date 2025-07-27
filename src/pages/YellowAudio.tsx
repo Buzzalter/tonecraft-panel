@@ -263,7 +263,7 @@ export default function YellowAudio() {
                 size="lg"
                 variant={isRunning ? "stop" : "start"}
                 className="w-48 h-12 text-lg font-semibold"
-                disabled={isWarmingUp}
+                disabled={!selectedFile || !selectedInputDevice || !selectedOutputDevice || isWarmingUp}
               >
                 {isWarmingUp ? (
                   <>
