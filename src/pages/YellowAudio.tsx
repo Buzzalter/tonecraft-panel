@@ -261,11 +261,8 @@ export default function YellowAudio() {
               <Button
                 onClick={handleStartStop}
                 size="lg"
-                className={`w-48 h-12 text-lg font-semibold transition-all shadow-glow ${
-                  isRunning 
-                    ? 'bg-destructive hover:bg-destructive/90 text-destructive-foreground' 
-                    : 'bg-gradient-primary hover:opacity-90 text-primary-foreground'
-                }`}
+                variant={isRunning ? "stop" : "start"}
+                className="w-48 h-12 text-lg font-semibold"
                 disabled={isWarmingUp}
               >
                 {isWarmingUp ? (
