@@ -10,6 +10,7 @@ import { Label } from '@/components/ui/label';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Loader2, Play, Square, Headphones } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import { audioAPI } from '@/lib/api';
 
 interface AudioDevice {
   id: string;
@@ -49,24 +50,13 @@ export default function YellowAudio() {
 
   const loadDevices = async () => {
     try {
-      // Mock devices for demo - in real app this would call an API
-      const mockInputDevices: AudioDevice[] = [
-        { id: 'input-1', name: 'Default Microphone' },
-        { id: 'input-2', name: 'USB Microphone' },
-        { id: 'input-3', name: 'Built-in Microphone' },
-      ];
+      const { inputDevices: apiInputDevices, outputDevices: apiOutputDevices } = await audioAPI.detectDevices();
       
-      const mockOutputDevices: AudioDevice[] = [
-        { id: 'output-1', name: 'Default Speakers' },
-        { id: 'output-2', name: 'Headphones' },
-        { id: 'output-3', name: 'USB Speakers' },
-      ];
-
-      setInputDevices(mockInputDevices);
-      setOutputDevices(mockOutputDevices);
+      setInputDevices(apiInputDevices);
+      setOutputDevices(apiOutputDevices);
       
-      if (mockInputDevices.length > 0) setSelectedInputDevice(mockInputDevices[0].id);
-      if (mockOutputDevices.length > 0) setSelectedOutputDevice(mockOutputDevices[0].id);
+      if (apiInputDevices.length > 0) setSelectedInputDevice(apiInputDevices[0].id);
+      if (apiOutputDevices.length > 0) setSelectedOutputDevice(apiOutputDevices[0].id);
     } catch (error) {
       toast({
         title: "Error",
@@ -79,28 +69,43 @@ export default function YellowAudio() {
   const handleStartStop = async () => {
     if (isRunning) {
       // Stop processing
-      setIsRunning(false);
-      toast({
-        title: "Processing Stopped",
-        description: "Audio processing has been stopped",
-      });
+      try {
+        await audioAPI.stop();
+        setIsRunning(false);
+        toast({
+          title: "Processing Stopped",
+          description: "Audio processing has been stopped",
+        });
+      } catch (error) {
+        toast({
+          title: "Error",
+          description: "Failed to stop audio processing",
+          variant: "destructive",
+        });
+      }
     } else {
       // Start processing
       setShowWarmupDialog(true);
       setIsWarmingUp(true);
       
       try {
-        // Simulate warmup delay
-        setTimeout(() => {
-          setIsWarmingUp(false);
-          setIsRunning(true);
-          setShowWarmupDialog(false);
-          toast({
-            title: "Processing Started",
-            description: "Audio processing is now active",
-          });
-        }, 3000); // 3 second warmup simulation
+        const config = {
+          sampleDuration,
+          chunkSize,
+          inputDevice: selectedInputDevice,
+          outputDevice: selectedOutputDevice,
+          language: selectedLanguage,
+          referenceAudio: selectedFile || undefined,
+        };
         
+        await audioAPI.start(config);
+        setIsWarmingUp(false);
+        setIsRunning(true);
+        setShowWarmupDialog(false);
+        toast({
+          title: "Processing Started",
+          description: "Audio processing is now active",
+        });
       } catch (error) {
         setIsWarmingUp(false);
         setShowWarmupDialog(false);

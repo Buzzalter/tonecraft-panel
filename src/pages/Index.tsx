@@ -100,12 +100,11 @@ const Index = () => {
       setIsLoading(true);
       try {
         const config = {
-          diffusionSteps,
+          sampleDuration: diffusionSteps,
           chunkSize,
-          crossfade,
-          extraContext,
           inputDevice,
           outputDevice,
+          language: 'en',
           referenceAudio: selectedFile || undefined,
         };
         

@@ -1,10 +1,9 @@
 interface AudioConfig {
-  diffusionSteps: number;
+  sampleDuration: number;
   chunkSize: number;
-  crossfade: number;
-  extraContext: number;
   inputDevice: string;
   outputDevice: string;
+  language: string;
   referenceAudio?: File;
 }
 
@@ -20,12 +19,11 @@ export const audioAPI = {
     const formData = new FormData();
     
     // Add config parameters
-    formData.append('diffusion_steps', config.diffusionSteps.toString());
+    formData.append('sample_duration', config.sampleDuration.toString());
     formData.append('chunk_size', config.chunkSize.toString());
-    formData.append('crossfade', config.crossfade.toString());
-    formData.append('extra_context', config.extraContext.toString());
     formData.append('input_device', config.inputDevice);
     formData.append('output_device', config.outputDevice);
+    formData.append('language', config.language);
     
     // Add reference audio file if provided
     if (config.referenceAudio) {
