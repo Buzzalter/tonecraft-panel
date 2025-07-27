@@ -12,7 +12,7 @@ interface Device {
   name: string;
 }
 
-const API_BASE_URL = 'http://localhost:8000'; // Adjust to your FastAPI backend URL
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000'; // Configurable via environment
 
 export const audioAPI = {
   async start(config: AudioConfig): Promise<void> {

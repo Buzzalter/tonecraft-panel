@@ -1,0 +1,8 @@
+# Override for development
+version: '3.8'
+
+services:
+  audio-ui-dev:
+    environment:
+      - VITE_API_URL=http://localhost:8000
+    profiles: ["dev"]

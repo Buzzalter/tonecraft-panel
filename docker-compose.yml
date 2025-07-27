@@ -1,0 +1,40 @@
+version: '3.8'
+
+services:
+  # Development service
+  audio-ui-dev:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "5173:5173"
+    volumes:
+      - .:/app
+      - /app/node_modules
+    environment:
+      - NODE_ENV=development
+    profiles: ["dev"]
+
+  # Production service
+  audio-ui-prod:
+    build:
+      context: .
+      dockerfile: Dockerfile.prod
+    ports:
+      - "80:80"
+    environment:
+      - NODE_ENV=production
+    profiles: ["prod"]
+
+  # Optional: Backend API service (if you have a FastAPI backend)
+  audio-api:
+    image: your-fastapi-image:latest
+    ports:
+      - "8000:8000"
+    environment:
+      - ENVIRONMENT=production
+    profiles: ["with-api"]
+
+networks:
+  default:
+    name: audio-processing-network
