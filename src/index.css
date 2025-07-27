@@ -103,42 +103,42 @@ All colors MUST be HSL.
   }
 }
 
-/* Yellow theme for /yellow route */
+/* Soft Yellow theme for /yellow route */
 .theme-yellow {
-  --background: 54 85% 96%;
-  --foreground: 35 50% 15%;
+  --background: 54 45% 96%;
+  --foreground: 35 35% 20%;
 
-  --card: 55 80% 97%;
-  --card-foreground: 35 50% 15%;
+  --card: 55 40% 97%;
+  --card-foreground: 35 35% 20%;
 
-  --popover: 55 80% 97%;
-  --popover-foreground: 35 50% 15%;
+  --popover: 55 40% 97%;
+  --popover-foreground: 35 35% 20%;
 
-  --primary: 48 95% 65%;
-  --primary-foreground: 35 50% 10%;
+  --primary: 48 65% 70%;
+  --primary-foreground: 35 40% 15%;
 
-  --secondary: 54 60% 88%;
-  --secondary-foreground: 35 40% 20%;
+  --secondary: 54 35% 90%;
+  --secondary-foreground: 35 30% 25%;
 
-  --muted: 56 50% 92%;
-  --muted-foreground: 35 30% 45%;
+  --muted: 56 30% 93%;
+  --muted-foreground: 35 25% 50%;
 
-  --accent: 45 90% 75%;
-  --accent-foreground: 35 50% 15%;
+  --accent: 45 55% 78%;
+  --accent-foreground: 35 35% 20%;
 
   --destructive: 0 70% 65%;
   --destructive-foreground: 0 5% 98%;
 
-  --border: 54 60% 85%;
-  --input: 56 50% 92%;
-  --ring: 48 95% 65%;
+  --border: 54 35% 87%;
+  --input: 56 30% 93%;
+  --ring: 48 65% 70%;
 
   /* Custom design tokens */
-  --primary-glow: 50 100% 80%;
+  --primary-glow: 50 70% 85%;
   --gradient-primary: linear-gradient(135deg, hsl(var(--primary)), hsl(var(--primary-glow)));
   --gradient-soft: linear-gradient(180deg, hsl(var(--background)), hsl(var(--muted)));
-  --shadow-soft: 0 4px 20px -4px hsl(var(--primary) / 0.15);
-  --shadow-glow: 0 0 25px hsl(var(--primary-glow) / 0.3);
+  --shadow-soft: 0 4px 20px -4px hsl(var(--primary) / 0.12);
+  --shadow-glow: 0 0 25px hsl(var(--primary-glow) / 0.2);
   --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
