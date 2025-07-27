@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
@@ -6,7 +6,9 @@ import { AudioUpload } from '@/components/AudioUpload';
 import { AudioPreview } from '@/components/AudioPreview';
 import { DeviceSelector } from '@/components/DeviceSelector';
 import { ParameterSlider } from '@/components/ParameterSlider';
-import { Play, Square } from 'lucide-react';
+import { Play, Square, RefreshCw } from 'lucide-react';
+import { audioAPI } from '@/lib/api';
+import { useToast } from '@/hooks/use-toast';
 
 const Index = () => {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
@@ -17,22 +19,112 @@ const Index = () => {
   const [crossfade, setCrossfade] = useState(0.25);
   const [extraContext, setExtraContext] = useState(0.2);
   const [isRunning, setIsRunning] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [inputDevices, setInputDevices] = useState<{ id: string; name: string }[]>([]);
+  const [outputDevices, setOutputDevices] = useState<{ id: string; name: string }[]>([]);
+  const { toast } = useToast();
 
-  // Mock device lists - in a real app these would come from audio API
-  const inputDevices = [
-    { id: 'default', name: 'Default Microphone' },
-    { id: 'mic1', name: 'USB Microphone' },
-    { id: 'mic2', name: 'Built-in Microphone' },
-  ];
+  // Load devices on component mount
+  useEffect(() => {
+    loadDevices();
+  }, []);
 
-  const outputDevices = [
-    { id: 'default', name: 'Default Speakers' },
-    { id: 'speakers1', name: 'Desktop Speakers' },
-    { id: 'headphones', name: 'Bluetooth Headphones' },
-  ];
+  // Send config updates to backend when parameters change
+  useEffect(() => {
+    if (inputDevice || outputDevice || selectedFile) {
+      const config = {
+        diffusionSteps,
+        chunkSize,
+        crossfade,
+        extraContext,
+        inputDevice,
+        outputDevice,
+      };
+      
+      // Debounce config updates
+      const timer = setTimeout(() => {
+        audioAPI.updateConfig(config).catch(error => {
+          console.error('Failed to update config:', error);
+        });
+      }, 500);
 
-  const handleStartStop = () => {
-    setIsRunning(!isRunning);
+      return () => clearTimeout(timer);
+    }
+  }, [diffusionSteps, chunkSize, crossfade, extraContext, inputDevice, outputDevice]);
+
+  const loadDevices = async () => {
+    try {
+      const devices = await audioAPI.detectDevices();
+      setInputDevices(devices.inputDevices);
+      setOutputDevices(devices.outputDevices);
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to detect audio devices. Using defaults.",
+        variant: "destructive",
+      });
+      // Fallback to mock devices
+      setInputDevices([
+        { id: 'default', name: 'Default Microphone' },
+        { id: 'mic1', name: 'USB Microphone' },
+        { id: 'mic2', name: 'Built-in Microphone' },
+      ]);
+      setOutputDevices([
+        { id: 'default', name: 'Default Speakers' },
+        { id: 'speakers1', name: 'Desktop Speakers' },
+        { id: 'headphones', name: 'Bluetooth Headphones' },
+      ]);
+    }
+  };
+
+  const handleStartStop = async () => {
+    if (isRunning) {
+      setIsLoading(true);
+      try {
+        await audioAPI.stop();
+        setIsRunning(false);
+        toast({
+          title: "Success",
+          description: "Audio processing stopped.",
+        });
+      } catch (error) {
+        toast({
+          title: "Error",
+          description: "Failed to stop processing.",
+          variant: "destructive",
+        });
+      } finally {
+        setIsLoading(false);
+      }
+    } else {
+      setIsLoading(true);
+      try {
+        const config = {
+          diffusionSteps,
+          chunkSize,
+          crossfade,
+          extraContext,
+          inputDevice,
+          outputDevice,
+          referenceAudio: selectedFile || undefined,
+        };
+        
+        await audioAPI.start(config);
+        setIsRunning(true);
+        toast({
+          title: "Success",
+          description: "Audio processing started.",
+        });
+      } catch (error) {
+        toast({
+          title: "Error",
+          description: "Failed to start processing.",
+          variant: "destructive",
+        });
+      } finally {
+        setIsLoading(false);
+      }
+    }
   };
 
   return (
@@ -151,7 +243,7 @@ const Index = () => {
             size="lg"
             onClick={handleStartStop}
             className="text-lg px-12 py-6 h-auto"
-            disabled={!selectedFile || !inputDevice || !outputDevice}
+            disabled={!selectedFile || !inputDevice || !outputDevice || isLoading}
           >
             {isRunning ? (
               <>
