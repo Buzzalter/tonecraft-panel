@@ -129,7 +129,9 @@ export default function YellowAudio() {
         </div>
 
         {/* Reference Audio Upload */}
-        <Card className="shadow-soft border-border/50">
+        <Card className={`shadow-soft border-border/50 transition-all duration-500 ${
+          isConfigDisabled ? 'opacity-40 pointer-events-none' : 'opacity-100'
+        }`}>
           <CardHeader>
             <CardTitle className="flex items-center space-x-2">
               <Headphones className="h-5 w-5 text-primary" />
@@ -154,7 +156,9 @@ export default function YellowAudio() {
         {/* Configuration Panel */}
         <div className="grid gap-6 md:grid-cols-2">
           {/* Audio Devices */}
-          <Card className="shadow-soft border-border/50">
+          <Card className={`shadow-soft border-border/50 transition-all duration-500 ${
+            isConfigDisabled ? 'opacity-40 pointer-events-none' : 'opacity-100'
+          }`}>
             <CardHeader>
               <CardTitle>Audio Devices</CardTitle>
             </CardHeader>
@@ -179,7 +183,9 @@ export default function YellowAudio() {
           </Card>
 
           {/* Parameters */}
-          <Card className="shadow-soft border-border/50">
+          <Card className={`shadow-soft border-border/50 transition-all duration-500 ${
+            isConfigDisabled ? 'opacity-40 pointer-events-none' : 'opacity-100'
+          }`}>
             <CardHeader>
               <CardTitle>Processing Parameters</CardTitle>
             </CardHeader>
@@ -250,17 +256,17 @@ export default function YellowAudio() {
               <Button
                 onClick={handleStartStop}
                 size="lg"
-                className={`w-48 h-12 text-lg font-semibold transition-all ${
+                className={`w-48 h-12 text-lg font-semibold transition-all shadow-glow ${
                   isRunning 
                     ? 'bg-destructive hover:bg-destructive/90 text-destructive-foreground' 
-                    : 'bg-primary hover:bg-primary/90 text-primary-foreground shadow-glow'
+                    : 'bg-gradient-primary hover:opacity-90 text-primary-foreground'
                 }`}
                 disabled={isWarmingUp}
               >
                 {isWarmingUp ? (
                   <>
                     <Loader2 className="mr-2 h-5 w-5 animate-spin" />
-                    Warming Up...
+                    Starting...
                   </>
                 ) : isRunning ? (
                   <>
