@@ -121,7 +121,7 @@ export default function YellowAudio() {
   const isConfigDisabled = isWarmingUp || isRunning;
 
   return (
-    <div className="min-h-screen bg-gradient-soft p-6 theme-yellow">
+    <div className="bg-gradient-soft p-6">
       <div className="max-w-4xl mx-auto space-y-8">
         {/* Header */}
         <div className="text-center space-y-2">
