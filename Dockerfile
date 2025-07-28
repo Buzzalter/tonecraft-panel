@@ -14,8 +14,8 @@ RUN npm install
 # Copy source code (will be overridden by volume mount in development)
 COPY . .
 
-# Expose development port
-EXPOSE 5173
+# Expose development port (matching vite.config.ts)
+EXPOSE 8080
 
-# Start development server with host binding
-CMD ["npm", "run", "dev", "--", "--host", "0.0.0.0"]
+# Start development server with hot reload and host binding
+CMD ["npm", "run", "dev", "--", "--host", "0.0.0.0", "--port", "8080"]
