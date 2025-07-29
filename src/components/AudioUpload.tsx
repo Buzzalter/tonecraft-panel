@@ -37,33 +37,36 @@ export const AudioUpload: React.FC<AudioUploadProps> = ({ onFileSelect, selected
   
   const routeContext = getRouteContext();
 
-  const onDrop = useCallback(async (acceptedFiles: File[]) => {
-    if (acceptedFiles.length > 0) {
-      const file = acceptedFiles[0];
-      if (file.type.startsWith('audio/')) {
-        setIsUploading(true);
-        try {
-          // Upload logic with route context for potential different handling
-          console.log(`Uploading from route: ${currentRoute} (context: ${routeContext})`);
-          await audioAPI.uploadAudio(file);
-          onFileSelect(file);
-          toast({
-            title: "Upload successful",
-            description: `${file.name} has been uploaded successfully from ${routeContext}.`,
-          });
-        } catch (error) {
-          toast({
-            title: "Upload failed",
-            description: error instanceof Error ? error.message : "Failed to upload audio file",
-            variant: "destructive",
-          });
-        } finally {
-          setIsUploading(false);
+  const onDrop = useCallback(
+    async (acceptedFiles: File[]) => {
+      if (acceptedFiles.length > 0) {
+        const file = acceptedFiles[0];
+        if (file.type.startsWith('audio/')) {
+          setIsUploading(true);
+          try {
+            // Upload logic with route context for potential different handling
+            console.log(`Uploading from route: ${currentRoute} (context: ${routeContext})`);
+            await audioAPI.uploadAudio(file);
+            onFileSelect(file);
+            toast({
+              title: "Upload successful",
+              description: `${file.name} has been uploaded successfully from ${routeContext}.`,
+            });
+          } catch (error) {
+            toast({
+              title: "Upload failed",
+              description: error instanceof Error ? error.message : "Failed to upload audio file",
+              variant: "destructive",
+            });
+          } finally {
+            setIsUploading(false);
+          }
         }
       }
-    }
-    setIsDragActive(false);
-  }, [onFileSelect, toast, currentRoute, routeContext]);
+      setIsDragActive(false);
+    },
+    [onFileSelect, toast, currentRoute, routeContext]
+  );
 
   const { getRootProps, getInputProps } = useDropzone({
     onDrop,
