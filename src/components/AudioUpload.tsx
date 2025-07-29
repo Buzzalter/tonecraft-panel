@@ -1,5 +1,6 @@
 import React, { useCallback, useState } from 'react';
 import { useDropzone } from 'react-dropzone';
+import { useLocation } from 'react-router-dom';
 import { Upload, X, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
@@ -17,6 +18,24 @@ export const AudioUpload: React.FC<AudioUploadProps> = ({ onFileSelect, selected
   const [isDragActive, setIsDragActive] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
   const { toast } = useToast();
+  
+  // Route detection logic - determines which page this component is rendered from
+  const location = useLocation();
+  const currentRoute = location.pathname;
+  
+  // Route-specific behavior: Different upload endpoints or handling based on the page
+  const getRouteContext = () => {
+    switch (currentRoute) {
+      case '/':
+        return 'main-audio-processor'; // Main audio processing page
+      case '/yellow':
+        return 'yellow-audio-page'; // Yellow audio page
+      default:
+        return 'unknown-page'; // Fallback for any other routes
+    }
+  };
+  
+  const routeContext = getRouteContext();
 
   const onDrop = useCallback(async (acceptedFiles: File[]) => {
     if (acceptedFiles.length > 0) {
@@ -24,11 +43,13 @@ export const AudioUpload: React.FC<AudioUploadProps> = ({ onFileSelect, selected
       if (file.type.startsWith('audio/')) {
         setIsUploading(true);
         try {
+          // Upload logic with route context for potential different handling
+          console.log(`Uploading from route: ${currentRoute} (context: ${routeContext})`);
           await audioAPI.uploadAudio(file);
           onFileSelect(file);
           toast({
             title: "Upload successful",
-            description: `${file.name} has been uploaded successfully.`,
+            description: `${file.name} has been uploaded successfully from ${routeContext}.`,
           });
         } catch (error) {
           toast({
@@ -42,7 +63,7 @@ export const AudioUpload: React.FC<AudioUploadProps> = ({ onFileSelect, selected
       }
     }
     setIsDragActive(false);
-  }, [onFileSelect, toast]);
+  }, [onFileSelect, toast, currentRoute, routeContext]);
 
   const { getRootProps, getInputProps } = useDropzone({
     onDrop,
