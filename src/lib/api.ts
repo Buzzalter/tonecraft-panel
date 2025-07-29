@@ -64,6 +64,22 @@ export const audioAPI = {
     }
   },
 
+  async uploadAudio(file: File): Promise<{ success: boolean; message?: string }> {
+    const formData = new FormData();
+    formData.append('audio_file', file);
+
+    const response = await fetch(`${API_BASE_URL}/upload-audio`, {
+      method: 'POST',
+      body: formData,
+    });
+
+    if (!response.ok) {
+      throw new Error(`Failed to upload audio: ${response.statusText}`);
+    }
+
+    return response.json();
+  },
+
   async detectDevices(): Promise<{ inputDevices: Device[]; outputDevices: Device[] }> {
     const response = await fetch(`${API_BASE_URL}/detect-devices`);
 

@@ -1,9 +1,11 @@
 import React, { useCallback, useState } from 'react';
 import { useDropzone } from 'react-dropzone';
-import { Upload, X } from 'lucide-react';
+import { Upload, X, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { cn } from '@/lib/utils';
+import { audioAPI } from '@/lib/api';
+import { useToast } from '@/hooks/use-toast';
 
 interface AudioUploadProps {
   onFileSelect: (file: File | null) => void;
@@ -13,16 +15,34 @@ interface AudioUploadProps {
 
 export const AudioUpload: React.FC<AudioUploadProps> = ({ onFileSelect, selectedFile, disabled = false }) => {
   const [isDragActive, setIsDragActive] = useState(false);
+  const [isUploading, setIsUploading] = useState(false);
+  const { toast } = useToast();
 
-  const onDrop = useCallback((acceptedFiles: File[]) => {
+  const onDrop = useCallback(async (acceptedFiles: File[]) => {
     if (acceptedFiles.length > 0) {
       const file = acceptedFiles[0];
       if (file.type.startsWith('audio/')) {
-        onFileSelect(file);
+        setIsUploading(true);
+        try {
+          await audioAPI.uploadAudio(file);
+          onFileSelect(file);
+          toast({
+            title: "Upload successful",
+            description: `${file.name} has been uploaded successfully.`,
+          });
+        } catch (error) {
+          toast({
+            title: "Upload failed",
+            description: error instanceof Error ? error.message : "Failed to upload audio file",
+            variant: "destructive",
+          });
+        } finally {
+          setIsUploading(false);
+        }
       }
     }
     setIsDragActive(false);
-  }, [onFileSelect]);
+  }, [onFileSelect, toast]);
 
   const { getRootProps, getInputProps } = useDropzone({
     onDrop,
@@ -32,7 +52,7 @@ export const AudioUpload: React.FC<AudioUploadProps> = ({ onFileSelect, selected
     multiple: false,
     onDragEnter: () => setIsDragActive(true),
     onDragLeave: () => setIsDragActive(false),
-    disabled
+    disabled: disabled || isUploading
   });
 
   const handleRemoveFile = () => {
@@ -45,7 +65,11 @@ export const AudioUpload: React.FC<AudioUploadProps> = ({ onFileSelect, selected
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-3">
             <div className="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center">
-              <Upload className="h-5 w-5 text-primary" />
+              {isUploading ? (
+                <Loader2 className="h-5 w-5 text-primary animate-spin" />
+              ) : (
+                <Upload className="h-5 w-5 text-primary" />
+              )}
             </div>
             <div>
               <p className="font-medium text-card-foreground">{selectedFile.name}</p>
@@ -59,7 +83,7 @@ export const AudioUpload: React.FC<AudioUploadProps> = ({ onFileSelect, selected
             size="sm" 
             onClick={handleRemoveFile}
             className="text-destructive hover:text-destructive hover:bg-destructive/10"
-            disabled={disabled}
+            disabled={disabled || isUploading}
           >
             <X className="h-4 w-4" />
           </Button>
@@ -73,7 +97,7 @@ export const AudioUpload: React.FC<AudioUploadProps> = ({ onFileSelect, selected
       {...getRootProps()} 
       className={cn(
         "p-8 border-2 border-dashed transition-all duration-300",
-        disabled 
+        disabled || isUploading
           ? "border-muted bg-muted/50 cursor-not-allowed opacity-60" 
           : isDragActive 
             ? "border-primary bg-primary/10 shadow-lg cursor-pointer" 
@@ -83,13 +107,17 @@ export const AudioUpload: React.FC<AudioUploadProps> = ({ onFileSelect, selected
       <input {...getInputProps()} />
       <div className="text-center">
         <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-primary/20 flex items-center justify-center">
-          <Upload className="h-8 w-8 text-primary" />
+          {isUploading ? (
+            <Loader2 className="h-8 w-8 text-primary animate-spin" />
+          ) : (
+            <Upload className="h-8 w-8 text-primary" />
+          )}
         </div>
         <h3 className="text-lg font-semibold mb-2 text-card-foreground">
-          Upload Reference Audio
+          {isUploading ? 'Uploading...' : 'Upload Reference Audio'}
         </h3>
         <p className="text-muted-foreground mb-4">
-          Drag & drop your audio file here, or click to browse
+          {isUploading ? 'Please wait while your file is being uploaded' : 'Drag & drop your audio file here, or click to browse'}
         </p>
         <p className="text-sm text-muted-foreground">
           Supports MP3, WAV, FLAC, M4A, OGG
